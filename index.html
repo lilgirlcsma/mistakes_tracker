@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>错题记录系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 20px;
+            color: #1e2a3e;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* 头部 */
+        .header {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e6edf4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            text-align: right;
+            background: #f0f4fa;
+            padding: 10px 18px;
+            border-radius: 40px;
+            min-width: 160px;
+        }
+        h1 {
+            font-size: 1.7rem;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .sub {
+            color: #4a627a;
+            font-size: 0.9rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 12px;
+            margin-top: 8px;
+        }
+        .countdown {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e40af;
+        }
+        .progress-text {
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            margin-top: 4px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        /* 表单卡片 */
+        .form-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1 1 160px;
+            min-width: 130px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5b6e8c;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+        }
+        .btn {
+            background: #1e40af;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: #1e3a8a;
+        }
+        .btn-danger {
+            background: white;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #fee2e2;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+        .btn-outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+        }
+        .btn-outline:hover {
+            background: #f8fafc;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+            border: none;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+            border: none;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.75rem;
+        }
+        /* 筛选栏 */
+        .filter-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e2e8f0;
+        }
+        .filter-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: white;
+        }
+        .stats {
+            background: #eef2ff;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        /* 今日状态卡片 */
+        .today-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin: 16px 0 20px 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .today-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eef2ff;
+        }
+        .today-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .total-badge {
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: normal;
+        }
+        .today-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 700px) {
+            .today-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c86a3;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .fill-hours { background: #10b981; }
+        .fill-focus { background: #f59e0b; }
+        .fill-math { background: #ef4444; }
+        .fill-408 { background: #8b5cf6; }
+        .stat-note {
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+        .today-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eef2ff;
+        }
+        /* 历史记录弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eef2ff;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        .history-item:hover {
+            background: #f8fafc;
+        }
+        .history-info {
+            flex: 1;
+        }
+        .history-date {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .history-detail {
+            font-size: 0.7rem;
+            color: #6c86a3;
+            margin-top: 4px;
+        }
+        /* 每周评价区域 */
+        .weekly-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin: 16px 0 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .weekly-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.8rem;
+        }
+        .weekly-badge {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 40px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        /* 备份按钮组 */
+        .backup-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+        }
+        /* 表格区域 */
+        .table-wrapper {
+            background: white;
+            border-radius: 24px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid #e9eef3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 700px;
+        }
+        th {
+            text-align: left;
+            padding: 14px 12px;
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid #f0f2f5;
+            vertical-align: middle;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-concept { background: #fee2e2; color: #991b1b; }
+        .badge-calc { background: #fff3e3; color: #b45309; }
+        .badge-think { background: #e0f2fe; color: #075985; }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            transition: 0.1s;
+        }
+        .icon-btn:hover {
+            background: #f1f5f9;
+        }
+        .status-done {
+            opacity: 0.6;
+            background: #f1f5f9;
+        }
+        .footer-info {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            text-align: center;
+            color: #6c86a3;
+        }
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .form-row { flex-direction: column; }
+            .header { flex-direction: column; text-align: center; gap: 12px; }
+            .header-right { text-align: center; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <h1>📘 错题复盘系统 <span style="font-size: 0.9rem; background: #eef2ff; padding: 4px 12px; border-radius: 40px;">数学一 + 408</span></h1>
+            <div class="sub">当日分类 · 周末压缩 · 月度顽固清单 | 数据存在本地浏览器</div>
+        </div>
+        <div class="header-right" id="countdownArea">
+            <div class="countdown" id="countdownDays">-- 天</div>
+            <div class="progress-text" id="progressPercent">加载中...</div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 备份导入导出按钮组 -->
+    <div class="backup-bar">
+        <button class="btn btn-success" id="exportDataBtn">📤 导出备份</button>
+        <button class="btn btn-warning" id="importDataBtn">📥 导入备份</button>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+    </div>
+
+    <!-- 新增错题表单 -->
+    <div class="form-card">
+        <div style="font-weight: 600; margin-bottom: 14px;">✍️ 添加错题区域</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>日期</label>
+                <input type="date" id="dateInput" value="">
+            </div>
+            <div class="form-group">
+                <label>科目</label>
+                <select id="subjectInput">
+                    <option value="高等数学">高等数学</option>
+                    <option value="线性代数">线性代数</option>
+                    <option value="概率论">概率论</option>
+                    <option value="数据结构">数据结构</option>
+                    <option value="计算机组成原理">计算机组成原理</option>
+                    <option value="操作系统">操作系统</option>
+                    <option value="计算机网络">计算机网络</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>题目来源</label>
+                <input type="text" id="sourceInput" placeholder="例: 真题2009 T15">
+            </div>
+            <div class="form-group">
+                <label>错因</label>
+                <select id="reasonInput">
+                    <option value="概念/方法不清">概念/方法不清</option>
+                    <option value="计算错误">计算错误</option>
+                    <option value="思路卡顿/速度慢">思路卡顿/速度慢</option>
+                    <option value="粗心，看错题、单位等">粗心，看错题、单位等</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>涉及知识点</label>
+                <input type="text" id="knowledgeInput" placeholder="中值定理 / Cache映射 / PV操作">
+            </div>
+            <div class="form-group">
+                <label>处理状态</label>
+                <select id="statusInput">
+                    <option value="待处理">待处理</option>
+                    <option value="已回顾教材/验证">已回顾教材/验证</option>
+                    <option value="顽固错题">顽固错题</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>备注(思路口诀)</label>
+                <input type="text" id="remarkInput" placeholder="请简述">
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+                <button class="btn" id="addBtn">➕ 添加错题</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选 & 统计 -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <select id="filterSubject">
+                <option value="all">全部科目</option>
+                <option value="高等数学">高等数学</option>
+                <option value="线性代数">线性代数</option>
+                <option value="概率论">概率论</option>
+                <option value="数据结构">数据结构</option>
+                <option value="计算机组成原理">计算机组成原理</option>
+                <option value="操作系统">操作系统</option>
+                <option value="计算机网络">计算机网络</option>
+            </select>
+            <select id="filterStatus">
+                <option value="all">全部状态</option>
+                <option value="待处理">待处理</option>
+                <option value="已回顾教材/验证">已回顾/验证</option>
+                <option value="顽固错题">顽固错题</option>
+            </select>
+            <input type="text" id="filterKeyword" placeholder="知识点/来源" style="width: 160px;">
+            <button class="btn-outline" id="resetFilterBtn" style="padding: 6px 16px;">重置筛选</button>
+        </div>
+        <div class="stats" id="statsArea">📊 加载中...</div>
+    </div>
+
+    <!-- 今日状态卡片 -->
+    <div class="today-card">
+        <div class="today-header">
+            <div class="today-title">
+                📊 今日学习状态
+                <span class="total-badge" id="totalDaysCount">累计记录 0 天</span>
+            </div>
+            <div>
+                <button class="btn-outline btn-sm" id="editTodayBtn" style="margin-right: 8px;">✏️ 编辑/记录</button>
+                <button class="btn-danger btn-sm" id="deleteTodayBtn">🗑️ 删除今日</button>
+                <button class="btn-outline btn-sm" id="viewHistoryBtn" style="margin-left: 8px;">📅 历史记录</button>
+            </div>
+        </div>
+        <div id="todayStatsContent">
+            <!-- 动态加载今日状态 -->
+        </div>
+    </div>
+
+    <!-- 编辑表单（默认隐藏） -->
+    <div class="form-card" id="editFormCard" style="display: none; margin-top: 0;">
+        <div style="font-weight: 600; margin-bottom: 14px;">✏️ 编辑今日学习状态</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>日期</label>
+                <input type="date" id="editDate" readonly>
+            </div>
+            <div class="form-group">
+                <label>学习时长(小时)</label>
+                <input type="number" id="editHours" step="0.5" placeholder="例: 9.5">
+            </div>
+            <div class="form-group">
+                <label>专注度(1-5)</label>
+                <select id="editFocus">
+                    <option value="">选择</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>数学状态(1-5)</label>
+                <select id="editMath">
+                    <option value="">选择</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>408状态(1-5)</label>
+                <select id="edit408">
+                    <option value="">选择</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>困难/收获</label>
+                <input type="text" id="editNote" placeholder="例: 级数卡了很久">
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+                <button class="btn" id="saveEditBtn">💾 保存</button>
+                <button class="btn-outline" id="cancelEditBtn" style="margin-left: 8px;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 每周评价卡片 -->
+    <div class="weekly-card" id="weeklyCard">
+        <div class="weekly-title">
+            <span>📊 本周学习概览</span>
+            <span style="font-size:0.7rem; color:#5b6e8c;">基于最近7天记录</span>
+        </div>
+        <div class="weekly-stats" id="weeklyStats">
+            <span>加载中...</span>
+        </div>
+    </div>
+
+    <!-- 错题表格 -->
+    <div class="table-wrapper">
+        <table id="mistakeTable">
+            <thead>
+                <tr><th>日期</th><th>科目</th><th>题目来源</th><th>错因</th><th>涉及知识点</th><th>状态</th><th>备注</th><th>操作</th> </thead>
+            <tbody id="tableBody"> <tr><td colspan="8" style="text-align:center;">暂无错题</td></tr> </tbody>
+        </table>
+    </div>
+    <div class="footer-info">
+        ⚡ 周末复盘：筛选“待处理”重做后，编辑改为“已回顾教材/验证”；<br>
+        🔁 月度复盘：关注“顽固错题”标签，集中突破薄弱知识点。<br>
+        💾 备份功能：点击“导出备份”保存数据，点击“导入备份”恢复数据
+    </div>
+</div>
+
+<!-- 历史记录弹窗 -->
+<div class="modal" id="historyModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span style="font-weight: 600;">📅 历史学习记录</span>
+            <button class="btn-outline btn-sm" id="closeModalBtn">关闭</button>
+        </div>
+        <div id="historyList"></div>
+    </div>
+</div>
+
+<script>
+    // ---------- 存储 KEY ----------
+    const STORAGE_KEY = 'kaoyan_mistakes_v1';
+    const DAILY_KEY = 'kaoyan_daily_status_v1';
+    let mistakes = [];
+    let dailyStatusMap = {};
+
+    // ========== 倒计时 ==========
+    function updateCountdown() {
+        const examDate = new Date(2026, 11, 19);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+        const startDate = new Date(2026, 3, 1);
+        const totalDays = Math.ceil((examDate - startDate) / (1000 * 60 * 60 * 24));
+        let percent = 0;
+        if (today >= startDate && today <= examDate) {
+            const elapsed = Math.ceil((today - startDate) / (1000 * 60 * 60 * 24));
+            percent = Math.min(100, (elapsed / totalDays) * 100);
+        } else if (today > examDate) percent = 100;
+        document.getElementById('countdownDays').innerHTML = diffDays > 0 ? `⏰ ${diffDays} 天` : (diffDays === 0 ? '📅 就是今天！' : '🎓 考研已结束');
+        document.getElementById('progressPercent').innerHTML = `📈 备考进度 ${Math.floor(percent)}% (4月→12月)`;
+        document.getElementById('progressBarFill').style.width = `${percent}%`;
+    }
+
+    // ========== 错题函数 ==========
+    function saveToLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(mistakes)); }
+    function loadFromLocal() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(raw) mistakes = JSON.parse(raw);
+        else { mistakes = []; saveToLocal(); }
+        renderTable();
+        updateStats();
+    }
+    function renderTable() {
+        const filterSubject = document.getElementById('filterSubject').value;
+        const filterStatus = document.getElementById('filterStatus').value;
+        const filterKeyword = document.getElementById('filterKeyword').value.trim().toLowerCase();
+        let filtered = mistakes.filter(m => {
+            if(filterSubject !== 'all' && m.subject !== filterSubject) return false;
+            if(filterStatus !== 'all' && m.status !== filterStatus) return false;
+            if(filterKeyword) return (m.knowledge || '').toLowerCase().includes(filterKeyword) || (m.source || '').toLowerCase().includes(filterKeyword);
+            return true;
+        });
+        const tbody = document.getElementById('tableBody');
+        if(filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">没有匹配的错题</td></tr>'; updateStats(filtered.length); return; }
+        let html = '';
+        filtered.forEach(m => {
+            let badgeClass = m.reason === '概念/方法不清' ? 'badge-concept' : (m.reason === '计算错误' ? 'badge-calc' : 'badge-think');
+            html += `<tr><td>${escapeHtml(m.date)}</td><td>${escapeHtml(m.subject)}</td><td>${escapeHtml(m.source)}</td><td><span class="badge ${badgeClass}">${escapeHtml(m.reason)}</span></td><td>${escapeHtml(m.knowledge)}</td><td>${escapeHtml(m.status)}</td><td>${escapeHtml(m.remark || '—')}</td><td class="action-btns"><button class="icon-btn" data-id="${m.id}" data-action="edit">✏️</button><button class="icon-btn" data-id="${m.id}" data-action="delete">🗑️</button></td></tr>`;
+        });
+        tbody.innerHTML = html;
+        updateStats(filtered.length);
+        document.querySelectorAll('[data-action="edit"]').forEach(btn => btn.addEventListener('click', (e) => { const id = Number(btn.getAttribute('data-id')); editMistakeById(id); }));
+        document.querySelectorAll('[data-action="delete"]').forEach(btn => btn.addEventListener('click', (e) => { const id = Number(btn.getAttribute('data-id')); if(confirm('删除这道错题？')) { mistakes = mistakes.filter(m => m.id !== id); saveToLocal(); renderTable(); } }));
+    }
+    function updateStats(displayCount = null) { const total = mistakes.length; const pending = mistakes.filter(m => m.status === '待处理').length; const stubborn = mistakes.filter(m => m.status === '顽固错题').length; const shown = displayCount !== null ? displayCount : total; document.getElementById('statsArea').innerHTML = `📊 显示 ${shown} / 共 ${total} 条 | 待处理: ${pending} | 顽固错题: ${stubborn}`; }
+    function editMistakeById(id) { const mistake = mistakes.find(m => m.id === id); if(!mistake) return; const newStatus = prompt('编辑状态', mistake.status); if(newStatus && (newStatus === '待处理' || newStatus === '已回顾教材/验证' || newStatus === '顽固错题')) mistake.status = newStatus; const newRemark = prompt('备注', mistake.remark || ''); if(newRemark !== null) mistake.remark = newRemark; const newKnowledge = prompt('知识点', mistake.knowledge); if(newKnowledge !== null && newKnowledge.trim()) mistake.knowledge = newKnowledge.trim(); saveToLocal(); renderTable(); }
+    function addMistake() { const date = document.getElementById('dateInput').value; if(!date) { alert('请选择日期'); return; } const subject = document.getElementById('subjectInput').value; const source = document.getElementById('sourceInput').value.trim(); if(!source) { alert('请填写题目来源'); return; } const reason = document.getElementById('reasonInput').value; const knowledge = document.getElementById('knowledgeInput').value.trim(); if(!knowledge) { alert('请填写涉及知识点'); return; } const status = document.getElementById('statusInput').value; const remark = document.getElementById('remarkInput').value.trim(); mistakes.unshift({ id: Date.now(), date, subject, source, reason, knowledge, status, remark }); saveToLocal(); renderTable(); document.getElementById('sourceInput').value = ''; document.getElementById('knowledgeInput').value = ''; document.getElementById('remarkInput').value = ''; document.getElementById('dateInput').valueAsDate = new Date(); }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); }
+
+    // ========== 今日状态函数 ==========
+    function loadDailyStatus() {
+        const raw = localStorage.getItem(DAILY_KEY);
+        if (raw) dailyStatusMap = JSON.parse(raw);
+        else dailyStatusMap = {};
+        updateTodayDisplay();
+        updateWeeklyUI();
+        updateTotalDaysCount();
+    }
+    function saveDailyStatus() {
+        localStorage.setItem(DAILY_KEY, JSON.stringify(dailyStatusMap));
+        updateTodayDisplay();
+        updateWeeklyUI();
+        updateTotalDaysCount();
+    }
+    function updateTotalDaysCount() {
+        const total = Object.keys(dailyStatusMap).length;
+        document.getElementById('totalDaysCount').innerHTML = `累计记录 ${total} 天`;
+    }
+    function updateTodayDisplay() {
+        const today = new Date().toISOString().slice(0,10);
+        const data = dailyStatusMap[today];
+        const container = document.getElementById('todayStatsContent');
+        if (!data) {
+            container.innerHTML = `<div style="text-align: center; padding: 40px; color: #94a3b8;">📭 今日尚未记录学习状态<br><button class="btn-outline btn-sm" id="quickEditBtn" style="margin-top: 12px;">✏️ 点击记录</button></div>`;
+            document.getElementById('quickEditBtn')?.addEventListener('click', () => showEditForm(today));
+            return;
+        }
+        const hoursPercent = Math.min(100, (data.hours / 12) * 100);
+        const focusPercent = (data.focus / 5) * 100;
+        const mathPercent = (data.math / 5) * 100;
+        const cs408Percent = (data.cs408 / 5) * 100;
+        container.innerHTML = `
+            <div class="today-stats-grid">
+                <div class="stat-card"><div class="stat-label">⏱️ 学习时长</div><div class="stat-value">${data.hours}<span style="font-size: 1rem;"> h</span></div><div class="progress-bar-container"><div class="progress-fill fill-hours" style="width: ${hoursPercent}%;"></div></div></div>
+                <div class="stat-card"><div class="stat-label">🎯 专注度</div><div class="stat-value">${data.focus}<span style="font-size: 1rem;"> /5</span></div><div class="progress-bar-container"><div class="progress-fill fill-focus" style="width: ${focusPercent}%;"></div></div></div>
+                <div class="stat-card"><div class="stat-label">📐 数学状态</div><div class="stat-value">${data.math}<span style="font-size: 1rem;"> /5</span></div><div class="progress-bar-container"><div class="progress-fill fill-math" style="width: ${mathPercent}%;"></div></div></div>
+                <div class="stat-card"><div class="stat-label">💻 408状态</div><div class="stat-value">${data.cs408}<span style="font-size: 1rem;"> /5</span></div><div class="progress-bar-container"><div class="progress-fill fill-408" style="width: ${cs408Percent}%;"></div></div></div>
+            </div>
+            ${data.note ? `<div class="stat-note">📌 ${escapeHtml(data.note)}</div>` : ''}
+        `;
+    }
+    function showEditForm(date) {
+        const data = dailyStatusMap[date] || {};
+        document.getElementById('editDate').value = date;
+        document.getElementById('editHours').value = data.hours || '';
+        document.getElementById('editFocus').value = data.focus || '';
+        document.getElementById('editMath').value = data.math || '';
+        document.getElementById('edit408').value = data.cs408 || '';
+        document.getElementById('editNote').value = data.note || '';
+        document.getElementById('editFormCard').style.display = 'block';
+        document.getElementById('editFormCard').scrollIntoView({ behavior: 'smooth' });
+    }
+    function saveEdit() {
+        const date = document.getElementById('editDate').value;
+        const hours = parseFloat(document.getElementById('editHours').value);
+        if (isNaN(hours)) { alert('请填写学习时长'); return; }
+        const focus = document.getElementById('editFocus').value;
+        const math = document.getElementById('editMath').value;
+        const cs408 = document.getElementById('edit408').value;
+        if (!focus || !math || !cs408) { alert('请填写完整评分'); return; }
+        dailyStatusMap[date] = { hours, focus: parseInt(focus), math: parseInt(math), cs408: parseInt(cs408), note: document.getElementById('editNote').value || '' };
+        saveDailyStatus();
+        document.getElementById('editFormCard').style.display = 'none';
+        alert('已保存');
+    }
+    function deleteToday() {
+        const today = new Date().toISOString().slice(0,10);
+        if (dailyStatusMap[today]) {
+            if (confirm(`删除 ${today} 的学习记录？`)) { delete dailyStatusMap[today]; saveDailyStatus(); alert('已删除'); }
+        } else { alert('今日尚无记录，无需删除'); }
+    }
+    function showHistory() {
+        const modal = document.getElementById('historyModal');
+        const historyList = document.getElementById('historyList');
+        const sortedDates = Object.keys(dailyStatusMap).sort().reverse();
+        if (sortedDates.length === 0) { historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#94a3b8;">暂无历史记录</div>'; }
+        else {
+            historyList.innerHTML = sortedDates.map(date => {
+                const d = dailyStatusMap[date];
+                return `<div class="history-item"><div class="history-info"><div class="history-date">📅 ${date}</div><div class="history-detail">${d.hours}h | 专注${d.focus} | 数学${d.math} | 408${d.cs408} ${d.note ? `| ${d.note}` : ''}</div></div><button class="btn-outline btn-sm" onclick="deleteHistoryDay('${date}')" style="background:#fee2e2;">删除</button></div>`;
+            }).join('');
+        }
+        modal.classList.add('show');
+    }
+    function deleteHistoryDay(date) { if (confirm(`删除 ${date} 的记录？`)) { delete dailyStatusMap[date]; saveDailyStatus(); showHistory(); } }
+    function updateWeeklyUI() {
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        const dayOfWeek = today.getDay();
+        const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(today.getDate() - diffToMonday);
+        startOfWeek.setHours(0,0,0,0);
+        const weeklyData = [];
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(startOfWeek);
+            date.setDate(startOfWeek.getDate() + i);
+            const dateStr = date.toISOString().slice(0,10);
+            if (dailyStatusMap[dateStr]) weeklyData.push(dailyStatusMap[dateStr]);
+        }
+        if (weeklyData.length === 0) { document.getElementById('weeklyStats').innerHTML = '<span>📭 本周暂无记录</span>'; return; }
+        const avgFocus = (weeklyData.reduce((s,d) => s + d.focus, 0) / weeklyData.length).toFixed(1);
+        const avgMath = (weeklyData.reduce((s,d) => s + d.math, 0) / weeklyData.length).toFixed(1);
+        const avg408 = (weeklyData.reduce((s,d) => s + d.cs408, 0) / weeklyData.length).toFixed(1);
+        const totalHours = weeklyData.reduce((s,d) => s + d.hours, 0).toFixed(1);
+        document.getElementById('weeklyStats').innerHTML = `<span class="weekly-badge">📅 记录 ${weeklyData.length}/7 天</span><span class="weekly-badge">⏱️ 总时长 ${totalHours}h</span><span class="weekly-badge">🎯 平均专注 ${avgFocus}/5</span><span class="weekly-badge">📐 平均数学 ${avgMath}/5</span><span class="weekly-badge">💻 平均408 ${avg408}/5</span>`;
+    }
+
+    // ========== 备份导入导出 ==========
+    function exportData() { const exportData = { version: "1.0", exportTime: new Date().toISOString(), mistakes, dailyStatus: dailyStatusMap }; const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `错题记录备份_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href); alert('备份导出成功'); }
+    function importData(file) { const reader = new FileReader(); reader.onload = function(e) { try { const imported = JSON.parse(e.target.result); if (imported.mistakes) { const existingIds = new Set(mistakes.map(m => m.id)); const newMistakes = imported.mistakes.filter(m => !existingIds.has(m.id)); mistakes = [...mistakes, ...newMistakes]; saveToLocal(); } if (imported.dailyStatus) { dailyStatusMap = { ...dailyStatusMap, ...imported.dailyStatus }; saveDailyStatus(); } renderTable(); alert('导入成功'); } catch(err) { alert('导入失败'); } }; reader.readAsText(file); }
+
+    // ========== 初始化 ==========
+    function setDefaultDate() { document.getElementById('dateInput').value = new Date().toISOString().slice(0,10); }
+    
+    document.getElementById('resetFilterBtn').addEventListener('click', () => { document.getElementById('filterSubject').value = 'all'; document.getElementById('filterStatus').value = 'all'; document.getElementById('filterKeyword').value = ''; renderTable(); });
+    document.getElementById('filterSubject').addEventListener('change', () => renderTable());
+    document.getElementById('filterStatus').addEventListener('change', () => renderTable());
+    document.getElementById('filterKeyword').addEventListener('input', () => renderTable());
+    document.getElementById('addBtn').addEventListener('click', addMistake);
+    document.getElementById('exportDataBtn').addEventListener('click', exportData);
+    document.getElementById('importDataBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
+    document.getElementById('importFileInput').addEventListener('change', (e) => { if(e.target.files.length) { importData(e.target.files[0]); e.target.value = ''; } });
+    document.getElementById('editTodayBtn').addEventListener('click', () => { showEditForm(new Date().toISOString().slice(0,10)); });
+    document.getElementById('deleteTodayBtn').addEventListener('click', deleteToday);
+    document.getElementById('viewHistoryBtn').addEventListener('click', showHistory);
+    document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+    document.getElementById('cancelEditBtn').addEventListener('click', () => { document.getElementById('editFormCard').style.display = 'none'; });
+    document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('historyModal').classList.remove('show'); });
+    window.deleteHistoryDay = deleteHistoryDay;
+    
+    setDefaultDate();
+    loadFromLocal();
+    loadDailyStatus();
+    updateCountdown();
+</script>
+</body>
+</html>
